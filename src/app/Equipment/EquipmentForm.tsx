@@ -5,6 +5,7 @@ import {useForm, SubmitHandler} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
 
 
+
 const departments = ["Machining", "Assembly","Packaging","Shipping"]
 const statuses = ["Operational","Down","Maintenance","Retired"]
 const EquipmentSchema = z.object({
@@ -17,9 +18,12 @@ const EquipmentSchema = z.object({
     status: z.enum(["Operational","Down","Maintenance","Retired"])
 })
 
-type Equipment = z.infer<typeof EquipmentSchema>
+export type Equipment = z.infer<typeof EquipmentSchema>
 
-const EquipmentForm = () => {
+interface EquipmentFormProps {
+  onSubmit: SubmitHandler<Equipment>;
+}
+const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
   const {register, handleSubmit, setError, formState:
     {errors, isSubmitting}, 
 
@@ -34,16 +38,21 @@ const EquipmentForm = () => {
     },
     resolver: zodResolver(EquipmentSchema)
   });
-  const onSubmit: SubmitHandler<Equipment> = async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  const equipment: Equipment[] = []
+  // const onSubmit: SubmitHandler<Equipment> = async (data) => {
+  //   try {
       
-    } catch (error) {
-      setError("root", {
-        message: "This email is already taken",
-      });
-    }
-  };
+  //     equipment.push(data)
+  //     await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+  //   } catch (error) {
+  //     setError("root", {
+  //       message: "This email is already taken",
+  //     });
+  //   }
+  // };
+
+
 
   return (
    <>
@@ -93,9 +102,10 @@ const EquipmentForm = () => {
     <input type="submit" className='bg-slate-100 text-black p-3 rounded-sm '/>
 
     </div>
-    
 
     </form>
+
+   
    </>
   )
 }

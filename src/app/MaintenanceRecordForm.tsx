@@ -5,18 +5,8 @@ import {useForm, SubmitHandler} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
 
 
-const departments = ["Machining", "Assembly","Packaging","Shipping"]
-const statuses = ["Operational","Down","Maintenance","Retired"]
-const EquipmentSchema = z.object({
-    name: z.string().min(3),
-    location: z.string(),
-    department: z.enum(["Machining", "Assembly","Packaging","Shipping"]),
-    model: z.string(),
-    serialNumber: z.string(),
-    installDate:z.date(), //TODO: MAKE IT SO YOU CAN ONLY USE PAST DATES
-    status: z.enum(["Operational","Down","Maintenance","Retired"])
-})
-
+const types = ['Preventive', 'Repair', 'Emergency']
+const completionStatuses = ['Complete' , 'Incomplete' , 'Pending Parts']
 const MainetenanceRecordSchema = z.object({
   id: z.string(),
   equipmentId: z.string(),
@@ -30,22 +20,14 @@ const MainetenanceRecordSchema = z.object({
   completionStatus: z.enum(['Complete' , 'Incomplete' , 'Pending Parts'])
 
 })
-type Equipment = z.infer<typeof EquipmentSchema>
+type MaintenanceRecord = z.infer<typeof MainetenanceRecordSchema>
 
 const MaintenanceRecordForm = () => {
   const {register, handleSubmit, setError, formState:
     {errors, isSubmitting}, 
 
-  } = useForm<Equipment>({
-    defaultValues: {
-      name: "Bob",
-      location: "New York City", 
-      model: "5FDSF6798ASDF",
-      serialNumber: "54315853",
-      installDate: new Date(),
-      
-    },
-    resolver: zodResolver(EquipmentSchema)
+  } = useForm<MaintenanceRecord>({
+    resolver: zodResolver(MainetenanceRecordSchema)
   });
   const onSubmit: SubmitHandler<Equipment> = async (data) => {
     try {
@@ -64,7 +46,7 @@ const MaintenanceRecordForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5 p-5 justify-center font-sans'>
       <div>
       <label htmlFor="name">Name: </label>
-      <input {...register("name")}type="text"  />
+      <input {...register("id")}type="text"  />
       </div>
      <div>
      <label htmlFor="location">Location</label>
