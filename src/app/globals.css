@@ -8,6 +8,7 @@ body {
 input, select, option{
   color:black;
   padding:.2rem;
+  background-color:lightgray;
   
 }
 @layer base {

@@ -9,12 +9,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 const departments = ["Machining", "Assembly","Packaging","Shipping"]
 const statuses = ["Operational","Down","Maintenance","Retired"]
 const EquipmentSchema = z.object({
+  id: z.string(),
     name: z.string().min(3),
     location: z.string(),
     department: z.enum(["Machining", "Assembly","Packaging","Shipping"]),
     model: z.string(),
     serialNumber: z.string(),
-    installDate:z.date(), //TODO: MAKE IT SO YOU CAN ONLY USE PAST DATES
+    installDate: z.string().refine(
+      (dateStr) => {
+        const date = new Date(dateStr);
+        return date <= new Date(); // Ensure date is not in the future
+      },
+      { message: "Install date must be in the past" }
+    ),
     status: z.enum(["Operational","Down","Maintenance","Retired"])
 })
 
@@ -23,41 +30,40 @@ export type Equipment = z.infer<typeof EquipmentSchema>
 interface EquipmentFormProps {
   onSubmit: SubmitHandler<Equipment>;
 }
+
+
 const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
-  const {register, handleSubmit, setError, formState:
+  const {register, handleSubmit, reset, formState:
     {errors, isSubmitting}, 
 
   } = useForm<Equipment>({
     defaultValues: {
-      name: "Bob",
-      location: "New York City", 
-      model: "5FDSF6798ASDF",
-      serialNumber: "54315853",
-      installDate: new Date(),
+      id: "default-id",
+    name: "Drill Press",
+    location: "Assembly",
+    department: "Machining", // Matches enum
+    model: "DP-101",
+    serialNumber: "123456789",
+    installDate: new Date().toISOString().split("T")[0], // Format for input type="date"
+    status: "Operational", // Matches enum
       
     },
     resolver: zodResolver(EquipmentSchema)
   });
   const equipment: Equipment[] = []
-  // const onSubmit: SubmitHandler<Equipment> = async (data) => {
-  //   try {
-      
-  //     equipment.push(data)
-  //     await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-  //   } catch (error) {
-  //     setError("root", {
-  //       message: "This email is already taken",
-  //     });
-  //   }
-  // };
+  
+  const handleFormSubmit: SubmitHandler<Equipment>= data => {
+    const newData = {...data, installDate: new Date(data.installDate)}
+    console.log(newData)
+    onSubmit(newData)
+    reset()
 
-
-
+  
+  }
   return (
    <>
    <h1 className='p-2'>Equipment Form</h1>
-    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5 p-5 justify-center font-sans'>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className='flex flex-col gap-5 p-5 justify-center font-sans'>
       <div>
       <label htmlFor="name">Name: </label>
       <input {...register("name")}type="text"  />
