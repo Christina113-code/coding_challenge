@@ -3,6 +3,7 @@ import React from 'react'
 import {z} from "zod";
 import {useForm, SubmitHandler} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
+import {v4 as uuidv4} from 'uuid'
 
 
 
@@ -33,12 +34,12 @@ interface EquipmentFormProps {
 
 
 const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
-  const {register, handleSubmit, reset, formState:
+  const {register, handleSubmit, reset,setError, formState:
     {errors, isSubmitting}, 
 
   } = useForm<Equipment>({
     defaultValues: {
-      id: "default-id",
+      id: uuidv4(),
     name: "Drill Press",
     location: "Assembly",
     department: "Machining", // Matches enum
@@ -50,13 +51,19 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
     },
     resolver: zodResolver(EquipmentSchema)
   });
-  const equipment: Equipment[] = []
   
   const handleFormSubmit: SubmitHandler<Equipment>= data => {
-    const newData = {...data, installDate: new Date(data.installDate)}
-    console.log(newData)
-    onSubmit(newData)
-    reset()
+    
+    try {
+      const newData = {...data, installDate: new Date(data.installDate)}
+      onSubmit(newData)
+      reset()
+      
+    } catch (error) {
+      setError("root", {
+        message: "Must fill in all input fields",
+      });
+    }
 
   
   }

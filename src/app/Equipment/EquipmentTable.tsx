@@ -57,9 +57,7 @@ const EquipmentTable = () => {
   const rerender = React.useReducer(() => ({}), {})[1]
 
   const onSubmit: SubmitHandler<Equipment> = (newEquipment) => {
-    console.log("submitted")
     setData((prev: Equipment[]) => [...prev, newEquipment]);
-   console.log(data)
 
 
   };

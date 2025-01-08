@@ -3,7 +3,7 @@ import React from 'react'
 import {z} from "zod";
 import {useForm, SubmitHandler} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
-
+import {v4 as uuidv4} from 'uuid'
 
 const types = ['Preventive', 'Repair', 'Emergency']
 const completionStatuses = ['Complete' , 'Incomplete' , 'Pending Parts']
@@ -11,7 +11,13 @@ const priorities = ['Low' , 'Medium' , 'High']
 const MainetenanceRecordSchema = z.object({
   id: z.string(),
   equipmentId: z.string(),
-  date: z.date(), //TODO: NOT FUTURE DATE
+  date: z.string().refine(
+    (dateStr) => {
+      const date = new Date(dateStr);
+      return date <= new Date(); // Ensure date is not in the future
+    },
+    { message: "Install date must be in the past" }
+  ), 
   type: z.enum(['Preventive', 'Repair', 'Emergency']),
   technician: z.string().min(2),
   hoursSpent: z.number().positive().max(24),
@@ -21,34 +27,55 @@ const MainetenanceRecordSchema = z.object({
   completionStatus: z.enum(['Complete' , 'Incomplete' , 'Pending Parts'])
 
 })
-type MaintenanceRecord = z.infer<typeof MainetenanceRecordSchema>
+export type MaintenanceRecord = z.infer<typeof MainetenanceRecordSchema>
 
-const MaintenanceRecordForm = () => {
-  const {register, handleSubmit, setError, formState:
+interface MaintenanceRecordProps {
+  onSubmit: SubmitHandler<MaintenanceRecord>;
+}
+
+
+const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
+  const {register, handleSubmit, setError, reset,formState:
     {errors, isSubmitting}, 
 
   } = useForm<MaintenanceRecord>({
-    resolver: zodResolver(MainetenanceRecordSchema)
-  });
-  const onSubmit: SubmitHandler<MaintenanceRecord> = async (data) => {
+
+ defaultValues: {
+      id: uuidv4(),
+    equipmentId: uuidv4(),
+    date: new Date().toISOString().split("T")[0], // Format for input type="date"
+    type: "Preventive", // Matches enum
+    technician: "Bob",
+    hoursSpent: 1,
+    description: "description", // Format for input type="date"
+    partsReplaced: "Operational", // Matches enum
+    priority: "Low",
+    completionStatus: "Complete",
+
+  
+  },
+  resolver: zodResolver(MainetenanceRecordSchema)
+});
+
+ const handleFormSubmit: SubmitHandler<MaintenanceRecord>= data => {
+   
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const newData = {...data, date: new Date(data.date)}
+      onSubmit(newData)
+      reset()
       
     } catch (error) {
       setError("root", {
         message: "Must fill in all input fields",
       });
     }
-  };
-
+  }
   return (
    <>
    <h1 className='p-2'>Maintenance Form</h1>
-    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5 p-5 justify-center font-sans'>
-      <div>
-      <label htmlFor="name">Name: </label>
-      <input {...register("id")}type="text"  />
-      </div>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className='flex flex-col gap-5 p-5 justify-center font-sans'>
+     
      <div>
      <label htmlFor="equipmentId">Equipment ID: </label>
      <input {...register("equipmentId")} type="text"  />

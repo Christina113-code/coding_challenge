@@ -5,6 +5,7 @@ import { SubmitHandler } from "react-hook-form";
 import { Equipment } from "./Equipment/EquipmentForm";
 import EquipmentTable from "./Equipment/EquipmentTable";
 import MaintenanceRecordForm from "./MaintenanceRecordForm";
+import MainetenanceRecordsTable from "./MainetenanceRecordsTable";
 
 
 export default function Home() {
@@ -25,7 +26,7 @@ const onSubmit: SubmitHandler<Equipment> = async (data: Equipment) => {
   {/* Equipment Form */}
   {/* <EquipmentForm onSubmit = {onSubmit}/> */}
   <EquipmentTable/>
-  <MaintenanceRecordForm/>
+<MainetenanceRecordsTable/>
   </>
   );
 }
