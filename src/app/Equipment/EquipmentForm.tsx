@@ -32,6 +32,7 @@ interface EquipmentFormProps {
   onSubmit: SubmitHandler<Equipment>;
 }
 
+// TODO: Error messages for invalid inputs!
 
 const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
   const {register, handleSubmit, reset,setError, formState:
@@ -69,19 +70,19 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
   }
   return (
    <>
-   <h1 className='p-2'>Equipment Form</h1>
+   <h1 className='p-2 font-bold text-lg'>Equipment Form</h1>
     <form onSubmit={handleSubmit(handleFormSubmit)} className='flex flex-col gap-5 p-5 justify-center font-sans'>
       <div>
       <label htmlFor="name">Name: </label>
-      <input {...register("name")}type="text"  />
+      <input {...register("name")}type="text" className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100' />
       </div>
      <div>
      <label htmlFor="location">Location</label>
-     <input {...register("location")} type="text"  />
+     <input {...register("location")} type="text" className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100' />
      </div>
     <div>
     <label htmlFor="department">Department</label>
-      <select  id="department" {...register("department")}>
+      <select  id="department" {...register("department")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'>
           {departments.map(dpt => 
 
             <option key={dpt}value={dpt}>{dpt}</option>
@@ -90,21 +91,21 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
     </div>
      <div>
      <label htmlFor="model">Model:</label>
-     <input type="text"{...register("model")} />
+     <input type="text"{...register("model")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
      </div>
     <div>
     <label htmlFor="serialNumber">Serial Number: </label>
-    <input type="text"{...register("serialNumber")}/>
+    <input type="text"{...register("serialNumber")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
     </div>
     <div>
 <label htmlFor="installDate">Install Date: </label>
-    <input type="date"{...register("installDate")} />
+    <input type="date"{...register("installDate")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
       
 
     </div>
     <div>
     <label htmlFor="status">Status: </label>
-      <select  id="status" {...register("status")}>
+      <select  id="status" {...register("status")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'>
       {statuses.map(stat => 
 
 <option key={stat}value={stat}>{stat}</option>
@@ -112,7 +113,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
       </select>
     </div>
     <div>
-    <input type="submit" className='bg-slate-100 text-black p-3 rounded-sm '/>
+    <input type="submit" className='bg-gray-900 text-white p-4 rounded-lg'/>
 
     </div>
 

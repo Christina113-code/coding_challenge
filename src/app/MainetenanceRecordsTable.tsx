@@ -5,10 +5,15 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
-  createColumnHelper
+  createColumnHelper,
+  getFilteredRowModel, 
+  getSortedRowModel,
+  SortingState,
+  ColumnFiltersState
 } from '@tanstack/react-table';
 import MaintenanceRecordForm , {MaintenanceRecord} from './MaintenanceRecordForm';
 import { SubmitHandler } from 'react-hook-form';
+import { Filter } from 'lucide-react';
 // Table Column Formatting 
 
 const columnHelper = createColumnHelper<MaintenanceRecord>()
@@ -62,7 +67,17 @@ export const columns = [
 
 const MaintenanceRecordsTable = () => {
   const [data, setData] = useState<MaintenanceRecord[]>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({})
+
+
   const rerender = React.useReducer(() => ({}), {})[1]
+
+  const toggleRowSelection = (id: string) => {
+    setSelectedRows(prev => ({...prev, [id]: !prev[id]}))
+  }
+
 
   const onSubmit: SubmitHandler<MaintenanceRecord> = (newMaintenanceRecord) => {
     console.log("submitted")
@@ -75,25 +90,53 @@ const MaintenanceRecordsTable = () => {
   const table = useReactTable<MaintenanceRecord>({
     data, 
     columns,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+      columnFilters
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters
   })
-  
+
+  const onFilterChange = (id: string, value: string) => setColumnFilters(
+    prev => prev.filter(f => f.id !== id).concat({
+      id, value
+    })
+  )
+//TODO
+// Include equipment name (joined from equipment data)
+// Implement sorting and filtering
+// Group by equipment option
   return (
     <>
+   
     <MaintenanceRecordForm onSubmit={onSubmit}/>
+    <div className="p-2 ">
+        <input
+          type="text"
+          placeholder="Search..."
+          onChange={(e) => onFilterChange("name",e.target.value)}
+          className="bg-gray-900 text-white p-4 rounded-lg"
+        />
+      </div>
     <div className="p-2">
       <table>
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <th key={header.id}>
+                <th key={header.id} className='p-6 cursor-pointer bg-slate-900' onClick={header.column.getToggleSortingHandler()}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
+                      {header.column.getIsSorted() === 'asc' ? '🔼': header.column.getIsSorted() === 'desc' ? '🔽' : ''}
+
                 </th>
               ))}
             </tr>
@@ -132,6 +175,7 @@ const MaintenanceRecordsTable = () => {
         Refresh Table
       </button>
     </div>
+  
     </>
     
   )

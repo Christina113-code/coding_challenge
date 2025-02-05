@@ -73,20 +73,20 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
   }
   return (
    <>
-   <h1 className='p-2'>Maintenance Form</h1>
+   <h1 className='p-2 text-lg font-bold'>Maintenance Form</h1>
     <form onSubmit={handleSubmit(handleFormSubmit)} className='flex flex-col gap-5 p-5 justify-center font-sans'>
      
      <div>
      <label htmlFor="equipmentId">Equipment ID: </label>
-     <input {...register("equipmentId")} type="text"  />
+     <input {...register("equipmentId")} type="text" className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100' />
      </div>
     <div>
     <label htmlFor="date">date</label>
-      <input  type="date"id="date" {...register("date")}/>
+      <input  type="date"id="date" {...register("date")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
     </div>
      <div>
      <label htmlFor="type">type:</label>
-     <select {...register("type")} >
+     <select {...register("type")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'>
         {types.map(type => 
           <option key={type} value={type}>{type}</option>
         )}
@@ -95,27 +95,27 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
      </div>
     <div>
     <label htmlFor="technician">Technician: </label>
-    <input type="text"{...register("technician")}/>
+    <input type="text"{...register("technician")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
     </div>
     <div>
 <label htmlFor="hoursSpent">Hours Spent </label>
-    <input type="text"{...register("hoursSpent")} />
+    <input type="text"{...register("hoursSpent")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
       
 
     </div>
     <div>
     <label htmlFor="description">Description: </label>
-      <input  id="description" {...register("description")}/>
+      <input  id="description" {...register("description")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
       
     </div>
     <div>
       <label htmlFor="partsReplaced">Parts Replaced (optionaL)</label>
-      <input type="text" {...register("partsReplaced")} />
+      <input type="text" {...register("partsReplaced")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
 
     </div>
     <div>
       <label htmlFor="priority">priority</label>
-      <select name="priority" id="priority">
+      <select name="priority" id="priority"className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'>
         {priorities.map(priority => 
           <option key={priority}value={priority}>{priority}</option>
         )}
@@ -123,7 +123,7 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
     </div>
     <div>
       <label htmlFor="completionStatus">Completion Status</label>
-      <select name="completionStatuses" id="completionStatuses">
+      <select name="completionStatuses" id="completionStatuses"className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'>
         {completionStatuses.map(cs => 
           <option value={cs} key={cs}>{cs}</option>
         )}
@@ -131,7 +131,7 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
 
     </div>
     <div>
-    <input type="submit" className='bg-slate-100 text-black p-3 rounded-sm '/>
+    <input type="submit" className='bg-gray-900 text-white p-4 rounded-lg '/>
 
     </div>
     

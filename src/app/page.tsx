@@ -23,10 +23,13 @@ const onSubmit: SubmitHandler<Equipment> = async (data: Equipment) => {
   
   return (
   <>
+  <div className="bg-gray-800 text-white">
+  <EquipmentTable/>
+  <MainetenanceRecordsTable/>
+  </div>
   {/* Equipment Form */}
   {/* <EquipmentForm onSubmit = {onSubmit}/> */}
-  <EquipmentTable/>
-<MainetenanceRecordsTable/>
+  
   </>
   );
 }
