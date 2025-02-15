@@ -11,9 +11,10 @@ import {
   SortingState,
   ColumnFiltersState
 } from '@tanstack/react-table';
-import MaintenanceRecordForm , {MaintenanceRecord} from './MaintenanceRecordForm';
+import MaintenanceRecordForm , {MaintenanceRecord} from '../Forms/MaintenanceRecordForm';
 import { SubmitHandler } from 'react-hook-form';
-import { Equipment } from './Equipment/EquipmentForm';
+import { Equipment } from '../Forms/EquipmentForm';
+import MaintenanceHoursChart from '../Dashboard/MaintenanceHoursChart';
 // Table Column Formatting 
 
 const columnHelper = createColumnHelper<MaintenanceRecord>()
@@ -75,29 +76,32 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
   const [data, setData] = useState<MaintenanceRecord[]>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
-
+  const [barData, setBarData] = useState<{department: string, hours: number}[]>([]);
 
   const rerender = React.useReducer(() => ({}), {})[1]
 
 
-useEffect(() => {
-  console.log(equipmentData);
-}, [equipmentData])
 
   const onSubmit: SubmitHandler<MaintenanceRecord> = (newMaintenanceRecord) => {
-    //check if equipment id is valid in equipment table 
-    if(!equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId )) {
-      console.log("equipment id not found");
-      
+    //check if equipment id is valid in equipment table
+    //I originally tried to use a map/obj here but ran into bugs with it not updating properly and overriding previous data when using the spread operator and useState
+    const equipment_item = equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId)? equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId): null;
+    if(!equipment_item) {
+      console.log("equipment id not found"); //change this to display to user later or put in try catch later
       return;
     };
-    const equipment_name = equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId).name;
-    newMaintenanceRecord.equipmentName = equipment_name;
-    console.log(newMaintenanceRecord)
+    //join equipment name to maintenance record table
+    newMaintenanceRecord.equipmentName = equipment_item.name;
+    
     setData((prev: MaintenanceRecord[]) => [...prev, newMaintenanceRecord]);
 
+    //update bar graph
+    const barRecord = {department: equipment_item.department, hours: newMaintenanceRecord.hoursSpent}
+    setBarData(prev=>[...prev, barRecord])
 
   };
+
+ 
   
   const table = useReactTable<MaintenanceRecord>({
     data, 
@@ -118,9 +122,6 @@ useEffect(() => {
       id, value
     })
   )
-//TODO
-// Include equipment name (joined from equipment data)
-// Group by equipment option
   return (
     <>
    
@@ -185,9 +186,8 @@ useEffect(() => {
       <button onClick={() => rerender()} className="border p-2">
         Refresh Table
       </button>
-      <button onClick={() => console.log(equipmentMap)}>fjdskalfj</button>
     </div>
-  
+    {/* <MaintenanceHoursChart data={barData}/> */}
     </>
     
   )

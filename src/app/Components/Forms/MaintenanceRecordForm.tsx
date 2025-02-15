@@ -21,7 +21,7 @@ const MainetenanceRecordSchema = z.object({
   ), 
   type: z.enum(['Preventive', 'Repair', 'Emergency']),
   technician: z.string().min(2),
-  hoursSpent: z.number().positive().max(24),
+  hoursSpent: z.coerce.number().positive().max(24),
   description: z.string().min(10),
   partsReplaced: z.string().optional(), //optional dynamic arr of strings
   priority: z.enum(['Low' , 'Medium' , 'High']),
@@ -43,7 +43,7 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
 
  defaultValues: {
       id: uuidv4(),
-    equipmentId: uuidv4(),
+    equipmentId: '',
     date: new Date().toISOString().split("T")[0], // Format for input type="date"
     type: "Preventive", // Matches enum
     technician: "Bob",
@@ -62,8 +62,9 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
    
 
     try {
-      const newData = {...data, date: new Date(data.date)}
-      onSubmit(newData)
+
+      const newData = {...data,  date: new Date(data.date)}
+      onSubmit(newData) //fix laturr
       reset()
       
     } catch (error) {
@@ -100,7 +101,7 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
     </div>
     <div>
 <label htmlFor="hoursSpent">Hours Spent </label>
-    <input type="text"{...register("hoursSpent")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
+    <input type="number"{...register("hoursSpent")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
       
 
     </div>

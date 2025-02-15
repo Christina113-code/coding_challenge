@@ -1,17 +1,15 @@
 'use client'
-import { useEffect, useRef, useState } from "react";
-import EquipmentForm from "./Equipment/EquipmentForm";
+import {  useState } from "react";
+import EquipmentForm from "./Components/Forms/EquipmentForm";
 import { SubmitHandler } from "react-hook-form";
-import { Equipment } from "./Equipment/EquipmentForm";
-import EquipmentTable from "./Equipment/EquipmentTable";
-import MaintenanceRecordForm from "./MaintenanceRecordForm";
-import MainetenanceRecordsTable from "./MainetenanceRecordsTable";
-
+import { Equipment } from "./Components/Forms/EquipmentForm";
+import EquipmentTable from './Components/Tables/EquipmentTable'
+import MainetenanceRecordsTable from "./Components/Tables/MainetenanceRecordsTable";
+import BarChart from "./Components/Dashboard/MaintenanceHoursChart"
 
 export default function Home() {
 const [equipment, setEquipment] = useState<Equipment[]>([])
 const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
-const [equipIds, setEquipIds] = useState<Record<string, string>[]>([])
 
 
 
@@ -46,6 +44,7 @@ const toggleRowSelection = (id: string) => {
     <EquipmentForm onSubmit={onSubmit} />
   <EquipmentTable data = {equipment} bulkUpdateStatus={bulkUpdateStatus} toggleRowSelection={toggleRowSelection} selectedRows={selectedRows}/>
   <MainetenanceRecordsTable equipmentData={equipment}/>
+  
   </div>
   {/* Equipment Form */}
   {/* <EquipmentForm onSubmit = {onSubmit}/> */}

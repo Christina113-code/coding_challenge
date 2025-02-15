@@ -11,7 +11,7 @@ import {
   SortingState,
   ColumnFiltersState
 } from '@tanstack/react-table';
-import EquipmentForm, { Equipment } from './EquipmentForm';
+import EquipmentForm, { Equipment } from './Forms/EquipmentForm';
 import { SubmitHandler } from 'react-hook-form';
 import { Filter } from 'lucide-react';
 

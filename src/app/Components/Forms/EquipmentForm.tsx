@@ -33,6 +33,8 @@ interface EquipmentFormProps {
 }
 
 // TODO: Error messages for invalid inputs!
+//select all feature for bulk status updates 
+
 
 const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
   const {register, handleSubmit, reset,setError, formState:
