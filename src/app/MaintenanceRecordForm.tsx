@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import {z} from "zod";
+import {optional, z} from "zod";
 import {useForm, SubmitHandler} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
 import {v4 as uuidv4} from 'uuid'
@@ -11,6 +11,7 @@ const priorities = ['Low' , 'Medium' , 'High']
 const MainetenanceRecordSchema = z.object({
   id: z.string(),
   equipmentId: z.string(),
+  equipmentName: z.string().optional(),
   date: z.string().refine(
     (dateStr) => {
       const date = new Date(dateStr);

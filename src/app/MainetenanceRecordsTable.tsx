@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import {
   ColumnDef,
   useReactTable,
@@ -13,10 +13,11 @@ import {
 } from '@tanstack/react-table';
 import MaintenanceRecordForm , {MaintenanceRecord} from './MaintenanceRecordForm';
 import { SubmitHandler } from 'react-hook-form';
-import { Filter } from 'lucide-react';
+import { Equipment } from './Equipment/EquipmentForm';
 // Table Column Formatting 
 
 const columnHelper = createColumnHelper<MaintenanceRecord>()
+
 
 export const columns = [
   columnHelper.accessor('id', {
@@ -27,6 +28,11 @@ export const columns = [
     cell: info => info.getValue(),
     footer: info => info.column.id,
   }),
+  columnHelper.accessor('equipmentName', {
+    cell: info => info.getValue(),
+    footer: info => info.column.id,
+  }),
+  
   columnHelper.accessor('date', {
     cell:  ({ getValue }) => {
       const date = getValue() as unknown as Date;
@@ -65,24 +71,30 @@ export const columns = [
 ]
 
 
-const MaintenanceRecordsTable = () => {
+const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) => {
   const [data, setData] = useState<MaintenanceRecord[]>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
-  const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({})
 
 
   const rerender = React.useReducer(() => ({}), {})[1]
 
-  const toggleRowSelection = (id: string) => {
-    setSelectedRows(prev => ({...prev, [id]: !prev[id]}))
-  }
 
+useEffect(() => {
+  console.log(equipmentData);
+}, [equipmentData])
 
   const onSubmit: SubmitHandler<MaintenanceRecord> = (newMaintenanceRecord) => {
-    console.log("submitted")
+    //check if equipment id is valid in equipment table 
+    if(!equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId )) {
+      console.log("equipment id not found");
+      
+      return;
+    };
+    const equipment_name = equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId).name;
+    newMaintenanceRecord.equipmentName = equipment_name;
+    console.log(newMaintenanceRecord)
     setData((prev: MaintenanceRecord[]) => [...prev, newMaintenanceRecord]);
-   console.log(data)
 
 
   };
@@ -108,7 +120,6 @@ const MaintenanceRecordsTable = () => {
   )
 //TODO
 // Include equipment name (joined from equipment data)
-// Implement sorting and filtering
 // Group by equipment option
   return (
     <>
@@ -118,7 +129,7 @@ const MaintenanceRecordsTable = () => {
         <input
           type="text"
           placeholder="Search..."
-          onChange={(e) => onFilterChange("name",e.target.value)}
+          onChange={(e) => onFilterChange("technician",e.target.value)}
           className="bg-gray-900 text-white p-4 rounded-lg"
         />
       </div>
@@ -174,6 +185,7 @@ const MaintenanceRecordsTable = () => {
       <button onClick={() => rerender()} className="border p-2">
         Refresh Table
       </button>
+      <button onClick={() => console.log(equipmentMap)}>fjdskalfj</button>
     </div>
   
     </>

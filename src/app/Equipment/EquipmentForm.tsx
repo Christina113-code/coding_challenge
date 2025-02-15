@@ -56,7 +56,8 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
   const handleFormSubmit: SubmitHandler<Equipment>= data => {
     
     try {
-      const newData = {...data, installDate: new Date(data.installDate)}
+      const newid = uuidv4()
+      const newData = {...data, id: newid, installDate: new Date(data.installDate)}
       onSubmit(newData)
       reset()
       

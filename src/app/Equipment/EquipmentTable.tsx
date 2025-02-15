@@ -63,32 +63,24 @@ export const columns = [
   }),
 ];
 
-const EquipmentTable = () => {
-  const [data, setData] = useState<Equipment[]>([]);
+interface EquipmentTableProps {
+  data: Equipment[],
+  bulkUpdateStatus: (newStatus: string) => void;
+  toggleRowSelection: (id: string) => void; 
+  selectedRows: Record<string, boolean>
+}
+const EquipmentTable: React.FC<EquipmentTableProps> = ({data, bulkUpdateStatus,toggleRowSelection, selectedRows }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
   ]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
+  
 
   const [search, setSearch] = useState('')
   const rerender = React.useReducer(() => ({}), {})[1];
 
-  const onSubmit: SubmitHandler<Equipment> = (newEquipment) => {
-    setData((prev: Equipment[]) => [...prev, newEquipment]);
-  };
 
-  const toggleRowSelection = (id: string) => {
-    setSelectedRows(prev => ({ ...prev, [id]: !prev[id] }));
-  };
 
-  const bulkUpdateStatus = (newStatus: string) => {
-    setData(prevData =>
-      prevData.map(equipment =>
-        selectedRows[equipment.id] ? { ...equipment, status: newStatus } : equipment
-      )
-    );
-    setSelectedRows({});
-  };
+  
   const filteredData = data.filter(item => 
     Object.values(item).some(value => 
       value.toString().toLowerCase().includes(search.toLowerCase())
@@ -109,11 +101,6 @@ const EquipmentTable = () => {
     onColumnFiltersChange: setColumnFilters,
   });
 
-  //TODO
-  // Implement sorting and filtering
-  // Enable bulk status updates - individual select and select all 
-
-
 const onFilterChange = (id: string, value: string) => setColumnFilters(
   prev => prev.filter(f => f.id !== id).concat({
     id, value
@@ -122,7 +109,7 @@ const onFilterChange = (id: string, value: string) => setColumnFilters(
 
   return (
     <>
-      <EquipmentForm onSubmit={onSubmit} />
+     
       <div className="p-2 ">
         <input
           type="text"
