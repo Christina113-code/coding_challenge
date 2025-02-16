@@ -43,7 +43,7 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
 
  defaultValues: {
       id: uuidv4(),
-    equipmentId: '',
+    equipmentId: '1',
     date: new Date().toISOString().split("T")[0], // Format for input type="date"
     type: "Preventive", // Matches enum
     technician: "Bob",
