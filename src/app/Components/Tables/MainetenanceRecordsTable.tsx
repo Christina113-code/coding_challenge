@@ -1,5 +1,7 @@
 'use client'
-import React, {  useEffect, useState } from 'react'
+import React, {  useState } from 'react'
+import dynamic from 'next/dynamic'
+
 import {
   ColumnDef,
   useReactTable,
@@ -14,7 +16,7 @@ import {
 import MaintenanceRecordForm , {MaintenanceRecord} from '../Forms/MaintenanceRecordForm';
 import { SubmitHandler } from 'react-hook-form';
 import { Equipment } from '../Forms/EquipmentForm';
-import MaintenanceHoursChart from '../Dashboard/MaintenanceHoursChart';
+const DynamicChart = dynamic(() => import('../Dashboard/MaintenanceHoursChart'), { ssr: false });
 // Table Column Formatting 
 
 const columnHelper = createColumnHelper<MaintenanceRecord>()
@@ -71,7 +73,10 @@ export const columns = [
   }),
 ]
 
-
+export type MaintenanceHoursRecord = {
+  department: string, 
+  hours: number
+}
 const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) => {
   const [data, setData] = useState<MaintenanceRecord[]>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -95,9 +100,11 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
     
     setData((prev: MaintenanceRecord[]) => [...prev, newMaintenanceRecord]);
 
-    //update bar graph
-    const barRecord = {department: equipment_item.department, hours: newMaintenanceRecord.hoursSpent}
-    setBarData(prev=>[...prev, barRecord])
+
+
+
+    const newRecord: MaintenanceHoursRecord = {department: equipment_item.department, hours: newMaintenanceRecord.hoursSpent}
+    setBarData(prev=>[...prev, newRecord])
 
   };
 
@@ -187,7 +194,7 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
         Refresh Table
       </button>
     </div>
-    {/* <MaintenanceHoursChart data={barData}/> */}
+    <DynamicChart data={barData}/>
     </>
     
   )

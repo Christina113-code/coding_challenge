@@ -5,7 +5,12 @@ import { SubmitHandler } from "react-hook-form";
 import { Equipment } from "./Components/Forms/EquipmentForm";
 import EquipmentTable from './Components/Tables/EquipmentTable'
 import MainetenanceRecordsTable from "./Components/Tables/MainetenanceRecordsTable";
-import BarChart from "./Components/Dashboard/MaintenanceHoursChart"
+import EquipmentPieChart from "./Components/Dashboard/EquipmentPieChart";
+
+import dynamic from 'next/dynamic'
+
+
+const DynamicPieChart = dynamic(() => import('./Components/Dashboard/EquipmentPieChart'), { ssr: false });
 
 export default function Home() {
 const [equipment, setEquipment] = useState<Equipment[]>([])
@@ -42,6 +47,7 @@ const toggleRowSelection = (id: string) => {
   <>
   <div className="bg-gray-800 text-white">
     <EquipmentForm onSubmit={onSubmit} />
+    <DynamicPieChart equipmentData={equipment}/>
   <EquipmentTable data = {equipment} bulkUpdateStatus={bulkUpdateStatus} toggleRowSelection={toggleRowSelection} selectedRows={selectedRows}/>
   <MainetenanceRecordsTable equipmentData={equipment}/>
   

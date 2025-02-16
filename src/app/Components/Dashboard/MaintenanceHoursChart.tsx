@@ -1,23 +1,39 @@
 'use client';
 import React, { useEffect, useState } from 'react'
-import { BarChart , CartesianGrid, YAxis, Tooltip, Legend} from 'recharts';
-import {Equipment} from '../Forms/EquipmentForm'
-import { MaintenanceRecord } from '../Forms/MaintenanceRecordForm';
-//maintenance hours by department
-const MaintenanceHoursChart = ({data}: {data: {department: string, hours: number}[]}) => {
+import { BarChart , CartesianGrid, XAxis,YAxis, Tooltip, Legend, Bar} from 'recharts';
+import {MaintenanceHoursRecord} from '../Tables/MainetenanceRecordsTable'
 
-  useEffect(() => {
-    console.log(data)
+//maintenance hours by department
+const MaintenanceHoursChart = ({data}: {data: MaintenanceHoursRecord[]}) => {
+    const [summedData, setSummedData] = useState<MaintenanceHoursRecord[]>([])
+    const sumDepartmentHours = (records:MaintenanceHoursRecord[])=> {
+      const acc = records.reduce((acc, item: MaintenanceHoursRecord) => {
+        console.log(acc)
+        if(acc[item.department]){
+          acc[item.department].hours +=item.hours;
+        }else{
+         acc[item.department] = {department: item.department, hours:item.hours}
+        }
+        return acc;
+      }, {} as {[key: string]: {department:string, hours:number}})
+      return Object.values(acc);
+    }
+    useEffect(() => {
+      const newData = sumDepartmentHours(data);
+      
+    setSummedData(newData);
   },[data])
+
+
   return (
-    <BarChart width={730} height={250} data={data}>
-  {/* <CartesianGrid strokeDasharray="3 3" /> */}
-  {/* <XAxis dataKey="name" /> */}
-  {/* <YAxis />
+    <BarChart  width={730} height={250} data={summedData}>
+  <CartesianGrid strokeDasharray="3 3" />
+  <XAxis dataKey="department" />
+  <YAxis/>
   <Tooltip />
-  <Legend /> */}
-  {/* <Bar dataKey="pv" fill="#8884d8" />
-  <Bar dataKey="uv" fill="#82ca9d" /> */}
+  <Legend /> 
+
+   <Bar dataKey="hours" fill="#8884d8" />
 </BarChart>
   )
 }
