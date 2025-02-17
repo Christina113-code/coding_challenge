@@ -14,6 +14,7 @@ import {
 import EquipmentForm, { Equipment } from './Forms/EquipmentForm';
 import { SubmitHandler } from 'react-hook-form';
 import { Filter } from 'lucide-react';
+import EditableCell from '../EditableCell';
 
 const columnHelper = createColumnHelper<Equipment>();
 
@@ -24,7 +25,7 @@ export const columns = [
     filterFn: 'includesString',
   }),
   columnHelper.accessor('name', {
-    cell: info => info.getValue(),
+    cell: EditableCell,
     footer: info => info.column.id,
     filterFn: 'includesString',
   }),
@@ -98,7 +99,8 @@ const EquipmentTable: React.FC<EquipmentTableProps> = ({data, bulkUpdateStatus,t
       columnFilters
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: setColumnFilters
+    
   });
 
 const onFilterChange = (id: string, value: string) => setColumnFilters(

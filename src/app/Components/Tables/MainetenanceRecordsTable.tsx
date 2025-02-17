@@ -1,9 +1,9 @@
 'use client'
 import React, {  useState } from 'react'
 import dynamic from 'next/dynamic'
-
+import {ToastContainer, toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import {
-  ColumnDef,
   useReactTable,
   getCoreRowModel,
   flexRender,
@@ -16,7 +16,8 @@ import {
 import MaintenanceRecordForm , {MaintenanceRecord} from '../Forms/MaintenanceRecordForm';
 import { SubmitHandler } from 'react-hook-form';
 import { Equipment } from '../Forms/EquipmentForm';
-const DynamicChart = dynamic(() => import('../Dashboard/MaintenanceHoursChart'), { ssr: false });
+const MaintHoursChart = dynamic(() => import('../Dashboard/MaintenanceHoursChart'), { ssr: false });
+
 // Table Column Formatting 
 
 const columnHelper = createColumnHelper<MaintenanceRecord>()
@@ -90,21 +91,24 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
   const onSubmit: SubmitHandler<MaintenanceRecord> = (newMaintenanceRecord) => {
     //check if equipment id is valid in equipment table
     //I originally tried to use a map/obj here but ran into bugs with it not updating properly and overriding previous data when using the spread operator and useState
-    const equipment_item = equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId)? equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId): null;
-    if(!equipment_item) {
-      console.log("equipment id not found"); //change this to display to user later or put in try catch later
-      return;
-    };
-    //join equipment name to maintenance record table
-    newMaintenanceRecord.equipmentName = equipment_item.name;
+
+      const equipment_item = equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId)? equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId): null;
+      if(!equipment_item) {
+        toast.error("Equipment ID not found") //change this to display to user later or put in try catch later
+        return;
+      };
+      //join equipment name to maintenance record table
+      newMaintenanceRecord.equipmentName = equipment_item.name;
+      
+      setData((prev: MaintenanceRecord[]) => [...prev, newMaintenanceRecord]);
+  
+  
+  
+  
+      const newRecord: MaintenanceHoursRecord = {department: equipment_item.department, hours: newMaintenanceRecord.hoursSpent}
+      setBarData(prev=>[...prev, newRecord])
     
-    setData((prev: MaintenanceRecord[]) => [...prev, newMaintenanceRecord]);
-
-
-
-
-    const newRecord: MaintenanceHoursRecord = {department: equipment_item.department, hours: newMaintenanceRecord.hoursSpent}
-    setBarData(prev=>[...prev, newRecord])
+    
 
   };
 
@@ -193,8 +197,9 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
       <button onClick={() => rerender()} className="border p-2">
         Refresh Table
       </button>
+      <ToastContainer/>
     </div>
-    <DynamicChart data={barData}/>
+    <MaintHoursChart data={barData}/>
     </>
     
   )

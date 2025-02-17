@@ -81,10 +81,14 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
      <div>
      <label htmlFor="equipmentId">Equipment ID: </label>
      <input {...register("equipmentId")} type="text" className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100' />
+     {errors.equipmentId && <p>{errors.equipmentId.message}</p>}
+
      </div>
     <div>
     <label htmlFor="date">date</label>
       <input  type="date"id="date" {...register("date")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
+      {errors.date && <p>{errors.date.message}</p>}
+
     </div>
      <div>
      <label htmlFor="type">type:</label>
@@ -94,25 +98,32 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
         )}
 
      </select>
+     {errors.type && <p>{errors.type.message}</p>}
+
      </div>
     <div>
     <label htmlFor="technician">Technician: </label>
     <input type="text"{...register("technician")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
+    {errors.technician && <p>{errors.technician.message}</p>}
+
     </div>
     <div>
 <label htmlFor="hoursSpent">Hours Spent </label>
     <input type="number"{...register("hoursSpent")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
       
+    {errors.hoursSpent && <p>{errors.hoursSpent.message}</p>}
 
     </div>
     <div>
     <label htmlFor="description">Description: </label>
       <input  id="description" {...register("description")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
+      {errors.description && <p>{errors.description.message}</p>}
       
     </div>
     <div>
       <label htmlFor="partsReplaced">Parts Replaced (optionaL)</label>
       <input type="text" {...register("partsReplaced")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
+      {errors.partsReplaced && <p>{errors.partsReplaced.message}</p>}
 
     </div>
     <div>
@@ -122,6 +133,8 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
           <option key={priority}value={priority}>{priority}</option>
         )}
       </select>
+      {errors.priority && <p>{errors.priority.message}</p>}
+
     </div>
     <div>
       <label htmlFor="completionStatus">Completion Status</label>
@@ -130,6 +143,7 @@ const MaintenanceRecordForm: React.FC<MaintenanceRecordProps>= ({onSubmit}) => {
           <option value={cs} key={cs}>{cs}</option>
         )}
          </select>
+         {errors.completionStatus && <p>{errors.completionStatus.message}</p>}
 
     </div>
     <div>

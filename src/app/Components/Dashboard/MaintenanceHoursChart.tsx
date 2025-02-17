@@ -8,7 +8,6 @@ const MaintenanceHoursChart = ({data}: {data: MaintenanceHoursRecord[]}) => {
     const [summedData, setSummedData] = useState<MaintenanceHoursRecord[]>([])
     const sumDepartmentHours = (records:MaintenanceHoursRecord[])=> {
       const acc = records.reduce((acc, item: MaintenanceHoursRecord) => {
-        console.log(acc)
         if(acc[item.department]){
           acc[item.department].hours +=item.hours;
         }else{
@@ -33,7 +32,7 @@ const MaintenanceHoursChart = ({data}: {data: MaintenanceHoursRecord[]}) => {
   <Tooltip />
   <Legend /> 
 
-   <Bar dataKey="hours" fill="#8884d8" />
+   <Bar dataKey="hours" fill="#8884d8" label={{fill: 'white'}} barSize={130}/>
 </BarChart>
   )
 }

@@ -78,10 +78,13 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
       <div>
       <label htmlFor="name">Name: </label>
       <input {...register("name")}type="text" className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100' />
+      {errors.name && <p>{errors.name.message}</p>}
       </div>
      <div>
      <label htmlFor="location">Location</label>
      <input {...register("location")} type="text" className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100' />
+     {errors.location && <p>{errors.location.message}</p>}
+
      </div>
     <div>
     <label htmlFor="department">Department</label>
@@ -91,18 +94,25 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
             <option key={dpt}value={dpt}>{dpt}</option>
           )}
       </select>
+      {errors.department && <p>{errors.department.message}</p>}
+
     </div>
      <div>
      <label htmlFor="model">Model:</label>
      <input type="text"{...register("model")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
      </div>
+     {errors.model && <p>{errors.model.message}</p>}
+
     <div>
     <label htmlFor="serialNumber">Serial Number: </label>
     <input type="text"{...register("serialNumber")}className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
+    {errors.serialNumber && <p>{errors.serialNumber.message}</p>}
+
     </div>
     <div>
 <label htmlFor="installDate">Install Date: </label>
     <input type="date"{...register("installDate")} className='bg-gray-900 p-1 m-3 rounded-lg text-indigo-100'/>
+    {errors.installDate && <p>{errors.installDate.message}</p>}
       
 
     </div>
@@ -114,6 +124,8 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({onSubmit}) => {
 <option key={stat}value={stat}>{stat}</option>
 )}
       </select>
+      {errors.status && <p>{errors.status.message}</p>}
+
     </div>
     <div>
     <input type="submit" className='bg-gray-900 text-white p-4 rounded-lg'/>
