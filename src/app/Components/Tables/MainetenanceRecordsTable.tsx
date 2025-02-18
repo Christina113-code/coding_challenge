@@ -1,5 +1,5 @@
 'use client'
-import React, {  useState } from 'react'
+import React, {  useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import {ToastContainer, toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -11,13 +11,27 @@ import {
   getFilteredRowModel, 
   getSortedRowModel,
   SortingState,
-  ColumnFiltersState
+  ColumnFiltersState,
+  Row
 } from '@tanstack/react-table';
 import MaintenanceRecordForm , {MaintenanceRecord} from '../Forms/MaintenanceRecordForm';
 import { SubmitHandler } from 'react-hook-form';
 import { Equipment } from '../Forms/EquipmentForm';
+import DateRangeFilter from '../DateRangeFilter'
 const MaintHoursChart = dynamic(() => import('../Dashboard/MaintenanceHoursChart'), { ssr: false });
+const dateRangeFilter = (row: Row<any>, columnId: string, filterValue: [Date | null, Date | null]) => {
+  const rowDate = new Date(row.getValue(columnId));
+  const [start, end] = filterValue;
 
+  if (start && end) {
+    return rowDate >= start && rowDate <= end;
+  } else if (start) {
+    return rowDate >= start;
+  } else if (end) {
+    return rowDate <= end;
+  }
+  return true;
+};
 // Table Column Formatting 
 
 const columnHelper = createColumnHelper<MaintenanceRecord>()
@@ -43,6 +57,7 @@ export const columns = [
       return date.toLocaleDateString(); // Formats date as MM/DD/YYYY
     },
     footer: info => info.column.id,
+    filterFn: dateRangeFilter,
   }),
   columnHelper.accessor('type', {
     cell: info => info.getValue(),
@@ -83,7 +98,7 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
   const [barData, setBarData] = useState<{department: string, hours: number}[]>([]);
-
+  const prevEquipment = useRef(equipmentData)
   const rerender = React.useReducer(() => ({}), {})[1]
 
 
@@ -94,7 +109,7 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
 
       const equipment_item = equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId)? equipmentData.find(eq => eq.id === newMaintenanceRecord.equipmentId): null;
       if(!equipment_item) {
-        toast.error("Equipment ID not found") //change this to display to user later or put in try catch later
+        toast.error("Equipment ID not found")
         return;
       };
       //join equipment name to maintenance record table
@@ -112,6 +127,36 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
 
   };
 
+  const updateData = (rowIndex: number, columnId: number, value: string) => {
+    setData((old) =>
+      old.map((row, index) => {
+        if (index === rowIndex) {
+          return {
+            ...row,
+            [columnId]: value,
+          };
+        }
+        return row;
+      })
+    );
+  };
+  // LATURRR
+// useEffect(() => {
+  
+//   if(equipmentData.length != prevEquipment.current.length){
+//     prevEquipment.current = equipmentData;
+//   }else{
+//     //if the name is changed and no equipment has been added 
+//     const id = 0;
+//     const equipment_name = ''
+//     const idset = new Set(data.map(item => item.equipmentId));
+//     // equipmentData.forEach(eq => {
+      
+//     // })
+//   }
+  
+
+// },[equipmentData])
  
   
   const table = useReactTable<MaintenanceRecord>({
@@ -137,7 +182,9 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
     <>
    
     <MaintenanceRecordForm onSubmit={onSubmit}/>
+    
     <div className="p-2 ">
+      {/* searchbar - search by technician name */}
         <input
           type="text"
           placeholder="Search..."
@@ -152,10 +199,13 @@ const MaintenanceRecordsTable = ({equipmentData}: {equipmentData: Equipment[]}) 
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <th key={header.id} className='p-6 cursor-pointer bg-slate-900' onClick={header.column.getToggleSortingHandler()}>
+                  { header.id === 'date'&& <DateRangeFilter column={header.column}/>}
+                
                   {header.isPlaceholder
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
+                        
                         header.getContext()
                       )}
                       {header.column.getIsSorted() === 'asc' ? '🔼': header.column.getIsSorted() === 'desc' ? '🔽' : ''}

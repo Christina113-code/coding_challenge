@@ -40,15 +40,43 @@ const bulkUpdateStatus = (newStatus: string) => {
   setSelectedRows({});
 };
 
+const updateData = (rowIndex: number, columnId: number, value: string) => {
+  setEquipment((old) =>
+    old.map((row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...row,
+          [columnId]: value,
+        };
+      }
+      return row;
+    })
+  );
+};
 const toggleRowSelection = (id: string) => {
   setSelectedRows(prev => ({ ...prev, [id]: !prev[id] }));
 };
+
+const selectAllRows = () => {
+ 
+
+  const newRows = Object.fromEntries(
+    Object.keys(selectedRows).map(key => [key, true])
+  )
+  equipment.forEach(eq => {
+    if(!Object.keys(selectedRows).includes(eq.id)){
+     setSelectedRows(prev => ({...prev, [eq.id]: true}))
+    }
+  }
+)}
+ 
+
   return (
   <>
   <div className="bg-gray-800 text-white">
     <EquipmentForm onSubmit={onSubmit} />
     <DynamicPieChart equipmentData={equipment}/>
-  <EquipmentTable data = {equipment} bulkUpdateStatus={bulkUpdateStatus} toggleRowSelection={toggleRowSelection} selectedRows={selectedRows}/>
+  <EquipmentTable data = {equipment} bulkUpdateStatus={bulkUpdateStatus} toggleRowSelection={toggleRowSelection} selectedRows={selectedRows} updateData={updateData} selectAllRows = {selectAllRows}/>
   <MainetenanceRecordsTable equipmentData={equipment}/>
   
   </div>

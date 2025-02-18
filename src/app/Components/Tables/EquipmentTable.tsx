@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import {
   ColumnDef,
   useReactTable,
@@ -64,24 +64,25 @@ export const columns = [
   }),
 ];
 
+
 interface EquipmentTableProps {
   data: Equipment[],
   bulkUpdateStatus: (newStatus: string) => void;
   toggleRowSelection: (id: string) => void; 
-  selectedRows: Record<string, boolean>
+  selectedRows: Record<string, boolean>;
+  updateData: (rowIndex: number, columnId: number, value: string) => void;
+  selectAllRows: () => void;
 }
-const EquipmentTable: React.FC<EquipmentTableProps> = ({data, bulkUpdateStatus,toggleRowSelection, selectedRows }) => {
+const EquipmentTable: React.FC<EquipmentTableProps> = ({data, bulkUpdateStatus,toggleRowSelection, selectedRows, updateData, selectAllRows }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
   ]);
   const [sorting, setSorting] = useState<SortingState>([]);
   
 
   const [search, setSearch] = useState('')
-  const rerender = React.useReducer(() => ({}), {})[1];
 
 
 
-  
   const filteredData = data.filter(item => 
     Object.values(item).some(value => 
       value.toString().toLowerCase().includes(search.toLowerCase())
@@ -99,8 +100,10 @@ const EquipmentTable: React.FC<EquipmentTableProps> = ({data, bulkUpdateStatus,t
       columnFilters
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters
-    
+    onColumnFiltersChange: setColumnFilters,
+    meta: {
+      updateData
+    }
   });
 
 const onFilterChange = (id: string, value: string) => setColumnFilters(
@@ -109,6 +112,9 @@ const onFilterChange = (id: string, value: string) => setColumnFilters(
   })
 )
 
+useEffect(() => {
+  console.log(selectedRows)
+},[selectedRows])
   return (
     <>
      
@@ -179,9 +185,11 @@ const onFilterChange = (id: string, value: string) => setColumnFilters(
           </tfoot>
         </table>
         <div className="h-4" />
-        <button onClick={() => rerender()} className="border p-2">
-          Refresh Table
+        <button className='border p-2' onClick={selectAllRows}>
+          Select All
         </button>
+        
+       
         <div className="flex gap-2 mt-4">
           <button onClick={() => bulkUpdateStatus('Operational')} className="border p-2 bg-green-900">
             Mark as Operational
