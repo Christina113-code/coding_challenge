@@ -30,5 +30,3 @@ npm start
 
 
 **Note:** This project is a **work in progress**, and I welcome any feedback or suggestions! 🚀  
-
-Let me know if you want to personalize it further!
